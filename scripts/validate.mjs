@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Checks the repo before release: skill frontmatter, no em or en dashes anywhere, and no forbidden
-// terms in the skill text or AGENTS.md. The forbidden terms are not kept in this repo; they come from
+// Checks the repo before release: skill frontmatter, no em or en dashes anywhere (or the HTML entities
+// that render as them), and no forbidden terms outside the tests. The forbidden terms are not kept in this repo; they come from
 // the HYGIENE_TERMS environment variable (one term per line), which CI reads from a secret.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -10,6 +10,10 @@ const SKIPPED_DIRS = new Set(['.git', 'node_modules', '.superpowers', 'dist']);
 const DASHES = [
   ['\u2014', 'em dash (U+2014)'],
   ['\u2013', 'en dash (U+2013)'],
+];
+const DASH_ENTITIES = [
+  [/&mdash;|&#8212;|&#x2014;/i, 'em dash entity'],
+  [/&ndash;|&#8211;|&#x2013;/i, 'en dash entity'],
 ];
 // The Agent Skills format allows 1024 characters; Claude apps accept 200, so that is the limit here.
 const MAX_DESCRIPTION = 200;
@@ -80,10 +84,15 @@ export function validate(rootDir, terms) {
     const lines = text.split('\n');
     const skillMatch = /^skills\/([^/]+)\/SKILL\.md$/.exec(file);
     if (skillMatch) checkSkill(file, skillMatch[1], lines, problems);
-    const termScoped = file.startsWith('skills/') || file === 'AGENTS.md';
+    const termScoped = !file.startsWith('tests/');
     lines.forEach((content, index) => {
       for (const [character, message] of DASHES) {
         if (content.includes(character)) problems.push({ file, line: index + 1, message });
+      }
+      if (!file.startsWith('tests/') && !file.startsWith('scripts/')) {
+        for (const [pattern, message] of DASH_ENTITIES) {
+          if (pattern.test(content)) problems.push({ file, line: index + 1, message });
+        }
       }
       if (termScoped) {
         const lower = content.toLowerCase();

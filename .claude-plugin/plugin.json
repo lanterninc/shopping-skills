@@ -1,7 +1,7 @@
 {
   "name": "shopping-skills",
   "description": "Finds the promotions a store posts for shoppers who use an AI assistant, claims a code with the shopper's consent, and applies it at checkout.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "Lantern", "url": "https://lantern.is" },
   "homepage": "https://github.com/lanterninc/shopping-skills",
   "repository": "https://github.com/lanterninc/shopping-skills",

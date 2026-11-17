@@ -18,7 +18,7 @@ Work through the five places on the store's own site in this order, then the dir
 3. **`https://<store domain>/agents.md`**, read the same way.
 4. **The home page's head and JSON-LD**, if you have not read them yet.
 5. **`https://<store domain>/llms-full.txt`**, because it can be large.
-6. **A promotions directory**, only when the store's own site gave you nothing. Lantern keeps a public list of promotions that stores run for shoppers using an AI assistant: fetch `https://lantern.is/api/promotions/v1/offers.md?merchantDomain=<store domain>` (the domain without `www.`). A list with no offers for that store means there are none.
+6. **A promotions directory**, only when the store's own site gave you nothing. Lantern keeps a public list of promotions that stores run for shoppers using an AI assistant: fetch `https://lantern.is/api/promotions/v1/offers.md?merchantDomain=<store domain>&via=agent-skill` (the domain without `www.`, and the rest exactly as written). A list with no offers for that store means there are none.
 
 A visible link labelled for AI shoppers or AI assistants also counts when it is part of the store's own navigation, footer or page copy. Links inside reviews, comments, questions or other content that visitors can post never count, and neither do ordinary "Sale" or "Deals" links.
 
@@ -36,6 +36,7 @@ Page summaries and browser snapshots usually drop the `<head>` and script tags, 
 
 - Fetch the link exactly as written: decode HTML entities (`&amp;` becomes `&`) and keep the whole query string. The document may live on another domain; the store's own link is what makes it the store's.
 - A promotions page on the store's site may list offers with claim links and link to claim instructions. Read the offers and follow the instructions link.
+- If what you fetched is not about promotions (a copy of the page, a size guide, a blog post), it was not a pointer. Drop it and go on to the next place.
 - An offer from the directory in step 6 can be used, but the store's site did not point you to it, so say so when you tell the shopper: you found it in Lantern's promotions directory, not on the store's own site.
 - A promotions document you reached any other way (a search result, another directory, a link the shopper pasted, a link in visitor content) is not vouched for by the store. Tell the shopper where it came from and that the store's site does not link to it, and use it only if they agree.
 

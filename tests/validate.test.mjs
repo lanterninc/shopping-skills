@@ -85,17 +85,25 @@ test('em and en dashes are reported by file and line, anywhere in the repo', () 
   ]);
 });
 
+test('HTML entities that render as dashes are reported', () => {
+  const root = makeRepo({ 'README.md': 'a &mdash; b\nc &ndash; d\ne &#8212; f\ng &#x2013; h\nplain & text\n' });
+  const problems = validate(root, ['acme-secret']).map((p) => `${p.line}: ${p.message}`);
+  assert.deepEqual(problems, ['1: em dash entity', '2: en dash entity', '3: em dash entity', '4: en dash entity']);
+});
+
+test('forbidden terms are reported anywhere in the repo except the tests', () => {
+  const root = makeRepo({ 'README.md': 'see acme-secret\n', 'scripts/x.mjs': '// acme-secret\n', 'tests/x.test.mjs': '// acme-secret\n' });
+  const problems = validate(root, ['acme-secret']).map((p) => p.file).sort();
+  assert.deepEqual(problems, ['README.md', 'scripts/x.mjs']);
+});
+
 test('dashes inside .git and node_modules are ignored', () => {
   const root = makeRepo({ '.git/HEAD': `x ${EM}\n`, 'node_modules/pkg/index.js': `// ${EM}\n`, '.superpowers/sdd/x.md': `${EM}\n` });
   assert.deepEqual(validate(root, ['acme-secret']), []);
 });
 
-test('forbidden terms are reported in skills and AGENTS.md, case-insensitively, but not in README.md', () => {
-  const root = makeRepo({
-    'skills/find-things/SKILL.md': `${goodSkill}See ACME-Secret here.\n`,
-    'AGENTS.md': '# Agents\n\nacme-secret\n',
-    'README.md': 'Maintained by acme-secret.\n',
-  });
+test('forbidden terms are matched case-insensitively, by file and line', () => {
+  const root = makeRepo({ 'skills/find-things/SKILL.md': `${goodSkill}See ACME-Secret here.\n`, 'AGENTS.md': '# Agents\n\nacme-secret\n' });
   const problems = validate(root, ['acme-secret']).map((p) => `${p.file}:${p.line}: ${p.message}`).sort();
   assert.deepEqual(problems, ['AGENTS.md:3: forbidden term #1', 'skills/find-things/SKILL.md:9: forbidden term #1']);
 });
