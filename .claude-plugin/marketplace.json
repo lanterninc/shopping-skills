@@ -1,0 +1,12 @@
+{
+  "name": "shopping-skills",
+  "description": "Agent skills for finding, claiming and applying store promotions while shopping.",
+  "owner": { "name": "Lantern", "url": "https://lantern.is" },
+  "plugins": [
+    {
+      "name": "shopping-skills",
+      "source": "./",
+      "description": "Finds the promotions a store posts for shoppers who use an AI assistant, claims a code with the shopper's consent, and applies it at checkout."
+    }
+  ]
+}
