@@ -5,7 +5,7 @@
   "description": "Agent skills that help shopping agents find, claim and apply promotions stores post for AI shoppers.",
   "license": "MIT",
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.mjs",
     "validate": "node scripts/validate.mjs"
   }
 }
